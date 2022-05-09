@@ -1,0 +1,24 @@
+{
+    "name": "presenting.ecslite",
+    "rootNamespace": "presenting.ecslite",
+    "references": [
+        "UniRx",
+        "Leopotam.EcsLite",
+        "ecslite.extensions",
+        "Utilities",
+        "Utilities.Unity",
+        "viewModel",
+        "unityPresenting",
+        "UnityEngine.UI",
+        "presenting"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

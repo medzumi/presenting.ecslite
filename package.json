@@ -1,0 +1,17 @@
+{
+  "name": "com.medzumi.presenting.ecslite",
+  "author": "Medzumi",
+  "displayName": "presenting.ecslite",
+  "unity": "2020.3",
+  "version": "1.0.0",
+  "dependencies": {
+    "com.medzumi.utilities" : "1.0.0",
+    "com.medzumi.utilities.unity" : "1.0.0",
+    "com.medzumi.ecslite" : "3000.0.0",
+    "com.medzumi.ecslite.extensions" : "1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/medzumi/ecslite.unityPresenting.git"
+  }
+}
