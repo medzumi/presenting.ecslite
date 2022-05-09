@@ -2,7 +2,7 @@
 using unityPresenting.Unity;
 using ViewModel;
 
-namespace presenting.ecslite.EcsLitePresenters.ViewModelPresenters
+namespace presenting.ecslite.ViewModelPresenters
 {
     public class OpenPresenter : AbstractPresenter<OpenPresenter, IViewModel>
     {

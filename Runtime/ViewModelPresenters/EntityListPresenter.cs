@@ -4,7 +4,7 @@ using unityPresenting.Core;
 using unityPresenting.Unity;
 using ViewModel;
 
-namespace presenting.ecslite.EcsLitePresenters.ViewModelPresenters
+namespace presenting.ecslite.ViewModelPresenters
 {
     public sealed class EntityListPresenter<TListComponent> : EntityListPresenter<EntityListPresenter<TListComponent>, TListComponent> 
         where TListComponent : struct, IListComponent<int>

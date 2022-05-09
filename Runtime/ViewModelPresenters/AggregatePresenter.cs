@@ -5,7 +5,7 @@ using unityPresenting.Core;
 using Utilities.Unity.SerializeReferencing;
 using ViewModel;
 
-namespace presenting.ecslite.EcsLitePresenters.ViewModelPresenters
+namespace presenting.ecslite.ViewModelPresenters
 {
     public sealed class AggregatePresenter : AbstractPresenter<AggregatePresenter, IViewModel>
     {

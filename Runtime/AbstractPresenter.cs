@@ -3,13 +3,15 @@ using ApplicationScripts.Ecs;
 using ApplicationScripts.Ecs.Utility;
 using Game.CoreLogic;
 using Leopotam.EcsLite;
+using presenting.Unity.Default;
 using unityPresenting.Core;
 using Utilities.Pooling;
+using ViewModel;
 
-namespace presenting.ecslite.EcsLitePresenters.ViewModelPresenters
+namespace presenting.ecslite
 {
     [Serializable]
-    public abstract class AbstractPresenter<TPresenter, TView> : PoolableObject<TPresenter>, IPresenter<EcsPresenterData, TView>
+    public abstract class AbstractPresenter<TPresenter, TView> : PoolableObject<TPresenter>, IPresenter<EcsPresenterData, TView>, IInjectResolver<IPresenterResolver>, IInjectResolver<IViewResolver>
         where TPresenter : AbstractPresenter<TPresenter, TView>, new()
     {
         public IViewResolver ViewResolver;
@@ -27,16 +29,6 @@ namespace presenting.ecslite.EcsLitePresenters.ViewModelPresenters
         protected TView View => _view;
         
         protected EcsPool<DisposableListComponent> DisposeComponentPool { get; private set; }
-
-        public void SetPresenterResolver(IPresenterResolver presenterResolver)
-        {
-            PresenterResolver = presenterResolver;
-        }
-
-        public void SetViewModelResolver(IViewResolver viewResolver)
-        {
-            ViewResolver = viewResolver;
-        }
 
         public virtual void Initialize(EcsPresenterData ecsPresenterData, TView view)
         {
@@ -71,7 +63,16 @@ namespace presenting.ecslite.EcsLitePresenters.ViewModelPresenters
 
         public void Initialize(object model, object view)
         {
-            throw new NotImplementedException();
+            Initialize((EcsPresenterData)model, (TView)view);
+        }
+        void IInjectResolver<IPresenterResolver>.Inject(IPresenterResolver resolver)
+        {
+            PresenterResolver = resolver;
+        }
+
+        void IInjectResolver<IViewResolver>.Inject(IViewResolver resolver)
+        {
+            ViewResolver = resolver;
         }
     }
     
