@@ -5,6 +5,7 @@ using Game.CoreLogic;
 using Leopotam.EcsLite;
 using presenting.Unity.Default;
 using unityPresenting.Core;
+using Utilities;
 using Utilities.Pooling;
 using ViewModel;
 
@@ -13,6 +14,7 @@ namespace presenting.ecslite
     [Serializable]
     public abstract class AbstractPresenter<TPresenter, TView> : PoolableObject<TPresenter>, IPresenter<EcsPresenterData, TView>, IInjectResolver<IPresenterResolver>, IInjectResolver<IViewResolver>
         where TPresenter : AbstractPresenter<TPresenter, TView>, new()
+        where TView : IDisposeHandler
     {
         public IViewResolver ViewResolver;
         public IPresenterResolver PresenterResolver;
@@ -36,6 +38,7 @@ namespace presenting.ecslite
             EcsPresenterData = ecsPresenterData;
             DisposeComponentPool = ecsPresenterData.ModelWorld.GetPool<DisposableListComponent>();
             DisposeComponentPool.EnsureGet(ecsPresenterData.ModelEntity).List.Add(this);
+            view.Subscribe(this);
         }
 
         public IPresenter<EcsPresenterData, TView> Clone()
@@ -80,6 +83,7 @@ namespace presenting.ecslite
     public abstract class AbstractPresenter<TPresenter, TView, TData> : AbstractPresenter<TPresenter, TView>, IUpdatable<TData>
         where TPresenter : AbstractPresenter<TPresenter, TView, TData>, new()
         where TData : struct
+        where TView : IDisposeHandler
     {
         public string HasComponentKey;
         
@@ -89,7 +93,9 @@ namespace presenting.ecslite
         {
             base.Initialize(ecsPresenterData, view);
             _updatablePool = ecsPresenterData.ModelWorld.GetPool<ListComponent<IUpdatable<TData>>>();
-            _updatablePool.EnsureGet(ecsPresenterData.ModelEntity).List.Add(this);
+            var component = _updatablePool.EnsureGet(ecsPresenterData.ModelEntity);
+            component.List.Add(this);
+            _updatablePool.Set(ecsPresenterData.ModelEntity, component);
         }
 
         public void Update(TData? data)
