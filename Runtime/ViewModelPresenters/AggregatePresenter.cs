@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using unityPresenting.Core;
+using unityPresenting.Unity;
 using Utilities.Unity.SerializeReferencing;
 using ViewModel;
 
@@ -9,14 +10,19 @@ namespace presenting.ecslite.ViewModelPresenters
 {
     public sealed class AggregatePresenter : AbstractPresenter<AggregatePresenter, IViewModel>
     {
-        [SerializeReference] [SerializeTypes(typeof(IPresenter<EcsPresenterData, IViewModel>))]
-        private List<IPresenter> _presenters = new List<IPresenter>();
+        [SerializeField] [PresenterKeyProperty(typeof(EcsPresenterData), typeof(IViewModel))]
+        private List<string> _presenterKeys = new List<string>();
+
+        private readonly List<IPresenter<EcsPresenterData, IViewModel>> _presenters =
+            new List<IPresenter<EcsPresenterData, IViewModel>>();
 
         public override void Initialize(EcsPresenterData ecsPresenterData, IViewModel view)
         {
             base.Initialize(ecsPresenterData, view);
-            foreach (var ecsPresenter in _presenters)
+            foreach (var ecsPresenterKey in _presenterKeys)
             {
+                var ecsPresenter = PresenterResolver.Resolve<EcsPresenterData, IViewModel>(ecsPresenterKey);
+                _presenters.Add(ecsPresenter);
                 if (ecsPresenter is IPresenter<EcsPresenterData, IViewModel> presenter)
                 {
                     presenter.Initialize(ecsPresenterData, view);
@@ -49,13 +55,8 @@ namespace presenting.ecslite.ViewModelPresenters
         protected override AggregatePresenter CloneHandler()
         {
             var clone = base.CloneHandler();
-            foreach (var ecsPresenter in _presenters)
-            {
-                if (ecsPresenter is IPresenter<EcsPresenterData, IViewModel> presenter)
-                {
-                    clone._presenters.Add(presenter.Clone());    
-                }
-            }
+            clone._presenterKeys.Clear();
+            clone._presenterKeys.AddRange(_presenterKeys);
 
             return clone;
         }

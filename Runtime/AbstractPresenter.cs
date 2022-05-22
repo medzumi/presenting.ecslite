@@ -12,7 +12,7 @@ using ViewModel;
 namespace presenting.ecslite
 {
     [Serializable]
-    public abstract class AbstractPresenter<TPresenter, TView> : PoolableObject<TPresenter>, IPresenter<EcsPresenterData, TView>, IInjectResolver<IPresenterResolver>, IInjectResolver<IViewResolver>
+    public abstract class AbstractPresenter<TPresenter, TView> : PoolableObject<TPresenter>, IPresenter<EcsPresenterData, TView>, IInject<IPresenterResolver>, IInject<IViewResolver>
         where TPresenter : AbstractPresenter<TPresenter, TView>, new()
         where TView : IDisposeHandler
     {
@@ -68,14 +68,26 @@ namespace presenting.ecslite
         {
             Initialize((EcsPresenterData)model, (TView)view);
         }
-        void IInjectResolver<IPresenterResolver>.Inject(IPresenterResolver resolver)
+        void IInject<IPresenterResolver>.Inject(IPresenterResolver injectable)
         {
-            PresenterResolver = resolver;
+            PresenterResolver = injectable;
+            PresenterResolverInjected(injectable);
         }
 
-        void IInjectResolver<IViewResolver>.Inject(IViewResolver resolver)
+        void IInject<IViewResolver>.Inject(IViewResolver injectable)
         {
-            ViewResolver = resolver;
+            ViewResolver = injectable;
+            ViewResolverInjected(injectable);
+        }
+
+        protected virtual void PresenterResolverInjected(IPresenterResolver presenterResolver)
+        {
+            
+        }
+
+        protected virtual void ViewResolverInjected(IViewResolver viewResolver)
+        {
+            
         }
     }
     
@@ -95,10 +107,10 @@ namespace presenting.ecslite
             _updatablePool = ecsPresenterData.ModelWorld.GetPool<ListComponent<IUpdatable<TData>>>();
             var component = _updatablePool.EnsureGet(ecsPresenterData.ModelEntity);
             component.List.Add(this);
-            _updatablePool.Set(ecsPresenterData.ModelEntity, component);
+            _updatablePool.Get(ecsPresenterData.ModelEntity) = component;
         }
 
-        public void Update(TData? data)
+        public virtual void Update(TData? data)
         {
             if (data.HasValue)
             {
@@ -114,11 +126,14 @@ namespace presenting.ecslite
         protected override void DisposeHandler()
         {
             base.DisposeHandler();
-            var data = _updatablePool.Get(EcsPresenterData.ModelEntity).List;
-            data.Remove(this);
-            if (data.Count == 0)
+            if (_updatablePool.Has(EcsPresenterData.ModelEntity))
             {
-                _updatablePool.Del(EcsPresenterData.ModelEntity);
+                var data = _updatablePool.Get(EcsPresenterData.ModelEntity).List;
+                data.Remove(this);
+                if (data.Count == 0)
+                {
+                    _updatablePool.Del(EcsPresenterData.ModelEntity);
+                }
             }
         }
     }
