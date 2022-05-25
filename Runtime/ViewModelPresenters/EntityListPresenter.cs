@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ecslite.extensions;
 using unityPresenting.Core;
 using unityPresenting.Unity;
+using Utilities;
 using Utilities.Pooling;
 using ViewModel;
 
@@ -67,7 +68,7 @@ namespace presenting.ecslite.ViewModelPresenters
                     if (presenterData.ModelEntity != list[index])
                     {
                         presenter.Dispose();
-                        presenter = _elementExamplePresenter.Clone();
+                        presenter = _elementExamplePresenter.CloneResolve();
                         presenterData.ModelEntity = list[index];
                         presenter.Initialize(presenterData, viewModel);
                         _buffer.Add((viewModel, (presenter, presenterData, index)));
@@ -109,7 +110,7 @@ namespace presenting.ecslite.ViewModelPresenters
             var entity = _currentListComponent.GetList()[arg1];
             var viewModel = ResolveElementViewModel(entity);
             var presenter = _elementExamplePresenter
-                .Clone();
+                .CloneResolve();
             var presenterEcsData = new EcsPresenterData()
             {
                 ModelWorld = EcsPresenterData.ModelWorld,
@@ -118,7 +119,7 @@ namespace presenting.ecslite.ViewModelPresenters
             presenter.Initialize(presenterEcsData, viewModel);
 
             _rootElementExamplePresenter
-                .Clone()
+                .CloneResolve()
                 .Initialize(new EcsPresenterData()
                 {
                     ModelWorld = EcsPresenterData.ModelWorld,

@@ -46,6 +46,11 @@ namespace presenting.ecslite
             return CloneHandler();
         }
 
+        IPresenter IClonable<IPresenter>.Clone()
+        {
+            return Clone();
+        }
+
         protected virtual TPresenter CloneHandler()
         {
             var clone = AbstractPresenter<TPresenter, TView>.Create();
